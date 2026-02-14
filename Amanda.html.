@@ -15,6 +15,7 @@
             justify-content: center;
             align-items: center;
             font-family: 'Arial', sans-serif;
+            cursor: pointer;
         }
 
         #nombre {
@@ -23,6 +24,7 @@
             text-shadow: 0 0 20px #fff, 0 0 30px #74b9ff, 0 0 40px #74b9ff;
             z-index: 10;
             animation: flotar 3s ease-in-out infinite;
+            user-select: none;
         }
 
         @keyframes flotar {
@@ -30,7 +32,6 @@
             50% { transform: translateY(-20px); }
         }
 
-        /* Estrellas simples */
         .star {
             position: absolute;
             background: white;
@@ -54,7 +55,6 @@
     </audio>
 
     <script>
-        // Crear estrellas aleatorias
         for (let i = 0; i < 150; i++) {
             let star = document.createElement('div');
             star.className = 'star';
@@ -68,9 +68,11 @@
         }
 
         function tocarMusica() {
-            document.getElementById('musica').play();
+            var audio = document.getElementById('musica');
+            audio.play().catch(function(error) {
+                console.log("El navegador bloqueó el audio al inicio.");
+            });
         }
     </script>
 </body>
 </html>
-
