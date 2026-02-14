@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Amanda ✨</title>
+    <style>
+        body {
+            margin: 0;
+            background: #050505;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        #nombre {
+            font-size: 4.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px #fff, 0 0 40px #ff00de, 0 0 60px #ff00de;
+            z-index: 100;
+            animation: latido 2s ease-in-out infinite;
+        }
+
+        .frase-flotante {
+            position: absolute;
+            white-space: nowrap;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            animation: moverFrase var(--t) linear infinite;
+            color: #d4fbff;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        .estrella {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: brillar var(--d) infinite;
+        }
+
+        @keyframes moverFrase {
+            from { transform: translateZ(-1000px) translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            to { transform: translateZ(500px) translateY(-200px); opacity: 0; }
+        }
+
+        @keyframes latido {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes brillar {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+    </style>
+</head>
+<body onclick="tocarMusica()">
+
+    <h1 id="nombre">Amanda</h1>
+
+    <audio id="musica" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const frases = [
+            "Eres mi universo", "A tu lado el amor es infinito", "Mi persona favorita", 
+            "La estrella que más brilla", "Gracias por existir", "Te quiero siempre",
+            "Mi lugar seguro", "Contigo todo es mejor", "Eres magia", "Mi reina"
+        ];
+
+        // Crear frases flotantes (Efecto video)
+        for (let i = 0; i < 40; i++) {
+            let p = document.createElement('p');
+            p.className = 'frase-flotante';
+            p.innerText = frases[Math.floor(Math.random() * frases.length)];
+            p.style.left = Math.random() * 100 + "vw";
+            p.style.top = Math.random() * 100 + "vh";
+            p.style.setProperty('--t', Math.random() * 10 + 5 + 's');
+            p.style.animationDelay = Math.random() * 10 + 's';
+            document.body.appendChild(p);
+        }
+
+        // Crear estrellas de colores
+        const colores = ['#fff', '#ffb3fb', '#b3e5ff', '#ffe9c4'];
+        for (let i = 0; i < 150; i++) {
+            let s = document.createElement('div');
+            s.className = 'estrella';
+            let size = Math.random() * 3 + 'px';
+            s.style.width = size;
+            s.style.height = size;
+            s.style.left = Math.random() * 100 + "vw";
+            s.style.top = Math.random() * 100 + "vh";
+            s.style.background = colores[Math.floor(Math.random() * colores.length)];
+            s.style.setProperty('--d', Math.random() * 3 + 1 + 's');
+            document.body.appendChild(s);
+        }
+
+        function tocarMusica() {
+            document.getElementById('musica').play();
+        }
+    </script>
+</body>
+</html>
