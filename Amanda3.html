@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Amanda ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Arial', sans-serif; cursor: grab; }
+        #interfaz {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            color: white;
+            margin: 0;
+            text-shadow: 0 0 20px #ff00de, 0 0 40px #ff00de;
+            animation: flotar 3s ease-in-out infinite;
+        }
+        .instruccion { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 10px; }
+        @keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    </style>
+</head>
+<body onclick="tocarMusica()">
+
+    <div id="interfaz">
+        <h1>Amanda</h1>
+        <p class="instruccion">Gira nuestro universo con tu dedo ✨<br>(Toca para que suene Morat)</p>
+    </div>
+
+    <audio id="musica" loop>
+        <source src="https://files.catbox.moe/r4c70k.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        let scene, camera, renderer, group;
+        // Palabras para generar las 1000 frases
+        const bases = ["Te amo", "Eres mi todo", "Siempre juntos", "Mi estrella", "Mi lugar seguro", "Eres magia", "Contigo siempre", "No se va", "Mi universo", "Te quiero"];
+        const extras = ["infinitamente", "por siempre", "en cada vida", "más que a nada", "mi niña", "Amanda", "hoy y siempre"];
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 60;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            group = new THREE.Group();
+            scene.add(group);
+
+            // 1000 Frases en el espacio 3D
+            for (let i = 0; i < 1000; i++) {
+                const canvasFrase = document.createElement('canvas');
+                const ctx = canvasFrase.getContext('2d');
+                canvasFrase.width = 300;
+                canvasFrase.height = 60;
+                
+                const texto = bases[Math.floor(Math.random() * bases.length)] + " " + extras[Math.floor(Math.random() * extras.length)];
+                
+                ctx.font = '24px Arial';
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#ff00de';
+                ctx.shadowBlur = 8;
+                ctx.fillText(texto, 150, 40);
+
+                const texture = new THREE.CanvasTexture(canvasFrase);
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.8 });
+                const sprite = new THREE.Sprite(spriteMaterial);
+
+                // Distribución esférica
+                const dist = 40 + Math.random() * 60;
+                const phi = Math.acos(-1 + (2 * i) / 1000);
+                const theta = Math.sqrt(1000 * Math.PI) * phi;
+                
+                sprite.position.set(
+                    dist * Math.sin(phi) * Math.cos(theta),
+                    dist * Math.sin(phi) * Math.sin(theta),
+                    dist * Math.cos(phi)
+                );
+                
+                sprite.scale.set(12, 3, 1);
+                group.add(sprite);
+            }
+
+            // Estrellas de fondo
+            const starGeometry = new THREE.BufferGeometry();
+            const starVertices = [];
+            for (let i = 0; i < 5000; i++) {
+                starVertices.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 }));
+            scene.add(stars);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            group.rotation.y += 0.001; // Rotación automática lenta
+            renderer.render(scene, camera);
+        }
+
+        // Controles táctiles
+        let isDragging = false, prevX = 0, prevY = 0;
+        const startMove = (x, y) => { isDragging = true; prevX = x; prevY = y; };
+        const endMove = () => isDragging = false;
+        const onMove = (x, y) => {
+            if (isDragging) {
+                group.rotation.y += (x - prevX) * 0.01;
+                group.rotation.x += (y - prevY) * 0.01;
+                prevX = x; prevY = y;
+            }
+        };
+
+        window.addEventListener('mousedown', e => startMove(e.clientX, e.clientY));
+        window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+        window.addEventListener('mouseup', endMove);
+        window.addEventListener('touchstart', e => startMove(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('touchmove', e => onMove(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('touchend', endMove);
+
+        function tocarMusica() { document.getElementById('musica').play(); }
+    </script>
+</body>
+</html>
