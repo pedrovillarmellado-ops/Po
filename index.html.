@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Amanda 🌌</title>
+    <title>Para Amanda ✨</title>
     <style>
         body {
             margin: 0;
@@ -16,15 +16,29 @@
             align-items: center;
             font-family: 'Arial', sans-serif;
             cursor: pointer;
+            color: white;
+            text-align: center;
         }
 
-        #nombre {
-            color: white;
-            font-size: 5rem;
-            text-shadow: 0 0 20px #fff, 0 0 30px #74b9ff, 0 0 40px #74b9ff;
+        #contenedor {
             z-index: 10;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-shadow: 0 0 20px #fff, 0 0 30px #74b9ff;
             animation: flotar 3s ease-in-out infinite;
-            user-select: none;
+            margin-bottom: 10px;
+        }
+
+        .frase {
+            font-size: 1.2rem;
+            font-style: italic;
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
         @keyframes flotar {
@@ -34,35 +48,43 @@
 
         .star {
             position: absolute;
-            background: white;
             border-radius: 50%;
             opacity: 0.5;
             animation: parpadeo var(--d) infinite;
         }
 
         @keyframes parpadeo {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
     </style>
 </head>
 <body onclick="tocarMusica()">
 
-    <h1 id="nombre">Amanda</h1>
+    <div id="contenedor">
+        <h1 id="nombre">Amanda</h1>
+        <p class="frase">"En medio de tantas estrellas, siempre serás la que más brilla en mi cielo."</p>
+        <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">(Toca cualquier parte para la música)</p>
+    </div>
 
     <audio id="musica" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        for (let i = 0; i < 150; i++) {
+        // Crear Galaxia de colores
+        const colores = ['#ffffff', '#ffe9c4', '#d4fbff', '#ffb3fb', '#b3e5ff'];
+        
+        for (let i = 0; i < 200; i++) {
             let star = document.createElement('div');
             star.className = 'star';
-            let size = Math.random() * 3 + 'px';
+            let size = Math.random() * 3 + 1 + 'px';
             star.style.width = size;
             star.style.height = size;
             star.style.top = Math.random() * 100 + 'vh';
             star.style.left = Math.random() * 100 + 'vw';
+            star.style.background = colores[Math.floor(Math.random() * colores.length)];
+            star.style.boxShadow = `0 0 ${Math.random() * 8}px white`;
             star.style.setProperty('--d', Math.random() * 3 + 2 + 's');
             document.body.appendChild(star);
         }
@@ -70,7 +92,7 @@
         function tocarMusica() {
             var audio = document.getElementById('musica');
             audio.play().catch(function(error) {
-                console.log("El navegador bloqueó el audio al inicio.");
+                console.log("El navegador bloqueó el audio.");
             });
         }
     </script>
