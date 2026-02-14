@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            background: radial-gradient(circle at center, #1B2735 0%, #090A0F 100%);
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -23,22 +23,26 @@
         #contenedor {
             z-index: 10;
             padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(2px);
         }
 
         h1 {
             font-size: 4rem;
-            text-shadow: 0 0 20px #fff, 0 0 30px #74b9ff;
+            text-shadow: 0 0 20px #fff, 0 0 30px #ff74d2;
             animation: flotar 3s ease-in-out infinite;
-            margin-bottom: 10px;
+            margin: 0;
         }
 
         .frase {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-style: italic;
-            opacity: 0.9;
-            max-width: 80%;
-            margin: 0 auto;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            margin-top: 15px;
+            opacity: 0;
+            animation: aparecer 4s forwards;
+            animation-delay: 1s;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
         }
 
         @keyframes flotar {
@@ -46,16 +50,19 @@
             50% { transform: translateY(-20px); }
         }
 
+        @keyframes aparecer {
+            to { opacity: 1; }
+        }
+
         .star {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.5;
             animation: parpadeo var(--d) infinite;
         }
 
         @keyframes parpadeo {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
         }
     </style>
 </head>
@@ -64,18 +71,17 @@
     <div id="contenedor">
         <h1 id="nombre">Amanda</h1>
         <p class="frase">"En medio de tantas estrellas, siempre serás la que más brilla en mi cielo."</p>
-        <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">(Toca cualquier parte para la música)</p>
+        <p style="font-size: 0.7rem; margin-top: 30px; opacity: 0.5;">(Toca la pantalla para escuchar a Morat 🎵)</p>
     </div>
 
     <audio id="musica" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // Crear Galaxia de colores
-        const colores = ['#ffffff', '#ffe9c4', '#d4fbff', '#ffb3fb', '#b3e5ff'];
+        const colores = ['#ffffff', '#ffe9c4', '#d4fbff', '#ffb3fb', '#b3e5ff', '#ff74d2'];
         
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 250; i++) {
             let star = document.createElement('div');
             star.className = 'star';
             let size = Math.random() * 3 + 1 + 'px';
@@ -84,16 +90,14 @@
             star.style.top = Math.random() * 100 + 'vh';
             star.style.left = Math.random() * 100 + 'vw';
             star.style.background = colores[Math.floor(Math.random() * colores.length)];
-            star.style.boxShadow = `0 0 ${Math.random() * 8}px white`;
-            star.style.setProperty('--d', Math.random() * 3 + 2 + 's');
+            star.style.boxShadow = `0 0 ${Math.random() * 10}px ${star.style.background}`;
+            star.style.setProperty('--d', Math.random() * 4 + 2 + 's');
             document.body.appendChild(star);
         }
 
         function tocarMusica() {
             var audio = document.getElementById('musica');
-            audio.play().catch(function(error) {
-                console.log("El navegador bloqueó el audio.");
-            });
+            audio.play();
         }
     </script>
 </body>
