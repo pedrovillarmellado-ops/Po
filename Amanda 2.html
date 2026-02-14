@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Amanda ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Arial', sans-serif; cursor: grab; }
+        #interfaz {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            color: white;
+            margin: 0;
+            text-shadow: 0 0 20px #ff00de, 0 0 40px #ff00de;
+            animation: flotar 3s ease-in-out infinite;
+        }
+        .instruccion { color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 20px; }
+        canvas { display: block; }
+    </style>
+</head>
+<body onclick="tocarMusica()">
+
+    <div id="interfaz">
+        <h1>Amanda</h1>
+        <p class="instruccion">Mueve la galaxia con tu dedo ✨<br>(Toca para sonar Morat)</p>
+    </div>
+
+    <audio id="musica" loop>
+        <source src="https://files.catbox.moe/r4c70k.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        let scene, camera, renderer, group;
+        const frases = ["Eres mi universo", "Te amo", "Mi estrella", "Quedate otra vez", "No se va", "Siempre tú", "Magia", "Mi lugar seguro", "Mi persona favorita", "Gracias por existir"];
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            group = new THREE.Group();
+            scene.add(group);
+
+            // Crear Estrellas
+            const starGeometry = new THREE.BufferGeometry();
+            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff });
+            const starVertices = [];
+            for (let i = 0; i < 2000; i++) {
+                starVertices.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+
+            // Crear Frases 3D (como puntos flotantes)
+            frases.forEach((texto, i) => {
+                const canvasFrase = document.createElement('canvas');
+                const ctx = canvasFrase.getContext('2d');
+                canvasFrase.width = 512;
+                canvasFrase.height = 128;
+                ctx.font = 'Bold 40px Arial';
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#ff00de';
+                ctx.shadowBlur = 10;
+                ctx.fillText(texto, 256, 64);
+
+                const texture = new THREE.CanvasTexture(canvasFrase);
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+                const sprite = new THREE.Sprite(spriteMaterial);
+
+                const phi = Math.acos(-1 + (2 * i) / frases.length);
+                const theta = Math.sqrt(frases.length * Math.PI) * phi;
+                sprite.position.set(30 * Math.sin(phi) * Math.cos(theta), 30 * Math.sin(phi) * Math.sin(theta), 30 * Math.cos(phi));
+                sprite.scale.set(15, 4, 1);
+                group.add(sprite);
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            group.rotation.y += 0.002;
+            renderer.render(scene, camera);
+        }
+
+        // Control táctil para mover
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        document.addEventListener('mousedown', () => isDragging = true);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                group.rotation.y += e.movementX * 0.005;
+                group.rotation.x += e.movementY * 0.005;
+            }
+        });
+        document.addEventListener('touchstart', (e) => { isDragging = true; previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
+        document.addEventListener('touchend', () => isDragging = false);
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                const deltaY = e.touches[0].clientY - previousMousePosition.y;
+                group.rotation.y += deltaX * 0.01;
+                group.rotation.x += deltaY * 0.01;
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        });
+
+        function tocarMusica() {
+            document.getElementById('musica').play();
+        }
+    </script>
+</body>
+</html>
